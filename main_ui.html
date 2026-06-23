@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction to Economics Quiz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background-color: #3b3b3b;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            padding-top: 20px;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 1000px;
+            background-color: #4a4a4a;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            height: fit-content;
+            min-height: 600px;
+        }
+
+        /* Header Styles */
+        .quiz-header {
+            background-color: #3b3b3b;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header-left h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            color: #f1f1f1;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .quiz-label {
+            color: #e67e22; /* Orange accent */
+            margin-right: 10px;
+        }
+
+        .active-label {
+            color: white;
+        }
+
+        .question-nav {
+            display: flex;
+            gap: 5px;
+        }
+
+        .nav-box {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #777;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: bold;
+            color: #ccc;
+            cursor: pointer;
+            background-color: #333;
+        }
+
+        .nav-box.active {
+            background-color: #e67e22;
+            color: white;
+            border-color: #e67e22;
+        }
+
+        .header-right {
+            text-align: right;
+            margin-bottom: 5px;
+        }
+
+        .timer-label {
+            font-size: 11px;
+            color: #aaa;
+            letter-spacing: 0.5px;
+        }
+
+        .timer-display {
+            font-size: 24px;
+            color: white;
+        }
+
+        /* Main Layout */
+        .main-layout {
+            display: flex;
+            background-color: #555;
+            padding: 15px 20px 0 0;
+            flex: 1;
+        }
+
+        /* Sidebar Tool Panel */
+        .sidebar {
+            width: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding-top: 10px;
+        }
+
+        .tool-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #3b3b3b;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+        }
+
+        .tool-icon:hover {
+            background-color: #2a2a2a;
+        }
+
+        /* Content Box */
+        .content-box {
+            background-color: white;
+            flex: 1;
+            padding: 30px 40px;
+            min-height: 400px;
+        }
+
+        .question-text {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .options-list {
+            list-style: none;
+            margin-bottom: 40px;
+            margin-left: 5px;
+        }
+
+        .options-list li {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .options-list span {
+            margin-right: 10px;
+        }
+
+        .instruction-text {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .radio-selections {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-left: 5px;
+        }
+
+        .radio-label {
+            font-size: 14px;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        /* Footer Controls */
+        .quiz-footer {
+            background-color: white;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #e0e0e0;
+            margin-left: 60px; /* offset for sidebar */
+            margin-right: 20px;
+            margin-bottom: 20px;
+        }
+
+        .mark-return {
+            color: #5bc0de;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .mark-return:hover {
+            text-decoration: underline;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 8px 30px;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .btn-next {
+            background: linear-gradient(to bottom, #73c8f0, #40a0db);
+            border: 1px solid #3598d4;
+        }
+
+        .btn-next:hover {
+            background: linear-gradient(to bottom, #5cbbe6, #2d8dca);
+        }
+
+        .btn-submit {
+            background: linear-gradient(to bottom, #73c8f0, #40a0db);
+            border: 1px solid #3598d4;
+        }
+
+        .btn-submit:hover {
+            background: linear-gradient(to bottom, #5cbbe6, #2d8dca);
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <header class="quiz-header">
+        <div class="header-left">
+            <h1>Introduction to Economics</h1>
+            <div class="subtitle">
+                <span class="quiz-label">Quiz</span>
+                <span class="active-label">Active</span>
+            </div>
+            <div class="question-nav">
+                <div class="nav-box">1</div>
+                <div class="nav-box">2</div>
+                <div class="nav-box active">3</div>
+                <div class="nav-box">4</div>
+                <div class="nav-box">5</div>
+                <div class="nav-box">6</div>
+                <div class="nav-box">7</div>
+                <div class="nav-box">8</div>
+                <div class="nav-box">9</div>
+                <div class="nav-box">10</div>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="timer-label">TIME REMAINING</div>
+            <div class="timer-display" id="timer">56:42</div>
+        </div>
+    </header>
+
+    <main class="main-layout">
+        <aside class="sidebar">
+            <div class="tool-icon"><i class="fa-solid fa-pen"></i></div>
+            <div class="tool-icon"><i class="fa-solid fa-headphones"></i></div>
+        </aside>
+
+        <section class="content-box">
+            <div class="question-text">
+                According to economists, as a result of scarcity, people must __________.
+            </div>
+            
+            <ul class="options-list">
+                <li><span>A.</span> spend less money now so they have more in the future</li>
+                <li><span>B.</span> realize that they can never have what they want</li>
+                <li><span>C.</span> design ways to recycle more of what they own</li>
+                <li><span>D.</span> make choices about how to use their resources</li>
+            </ul>
+
+            <div class="instruction-text">
+                Please select the best answer from the choices provided
+            </div>
+
+            <form class="radio-selections">
+                <label class="radio-label">
+                    <input type="radio" name="answer" value="A"> A
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="answer" value="B"> B
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="answer" value="C"> C
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="answer" value="D" checked> D
+                </label>
+            </form>
+        </section>
+    </main>
+
+    <footer class="quiz-footer">
+        <a href="#" class="mark-return">Mark this and return</a>
+        <div class="action-buttons">
+            <button class="btn btn-next">Next</button>
+            <button class="btn btn-submit">Submit</button>
+        </div>
+    </footer>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Basic countdown timer for visual effect
+        const timerDisplay = document.getElementById('timer');
+        let totalSeconds = (56 * 60) + 42; // 56 minutes and 42 seconds
+
+        function updateTimer() {
+            if (totalSeconds <= 0) return;
+            
+            totalSeconds--;
+            
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            
+            // Pad single digits with a leading zero
+            const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+            const formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
+            
+            timerDisplay.textContent = `${formattedMinutes}:${formattedSeconds}`;
+        }
+
+        // Update the timer every second
+        setInterval(updateTimer, 1000);
+    });
+</script>
+
+</body>
+</html>

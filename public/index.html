@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction to Algebra Quiz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background-color: #3b3b3b;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px 10px;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 1000px;
+            background-color: #4a4a4a;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            height: fit-content;
+            min-height: 600px;
+        }
+
+        .quiz-header {
+            background-color: #3b3b3b;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .header-left h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            color: #f1f1f1;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .quiz-label {
+            color: #e67e22;
+            margin-right: 10px;
+        }
+
+        .active-label {
+            color: white;
+        }
+
+        .question-nav {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .nav-box {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #777;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: bold;
+            color: #ccc;
+            cursor: pointer;
+            background-color: #333;
+        }
+
+        .nav-box.active {
+            background-color: #e67e22;
+            color: white;
+            border-color: #e67e22;
+        }
+
+        .header-right {
+            text-align: right;
+            margin-bottom: 5px;
+        }
+
+        .timer-label {
+            font-size: 11px;
+            color: #aaa;
+            letter-spacing: 0.5px;
+        }
+
+        .timer-display {
+            font-size: 24px;
+            color: white;
+        }
+
+        .main-layout {
+            display: flex;
+            background-color: #555;
+            padding: 15px 20px 0 0;
+            flex: 1;
+        }
+
+        .sidebar {
+            width: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding-top: 10px;
+            flex-shrink: 0;
+        }
+
+        .tool-icon {
+            width: 40px;
+            height: 40px;
+            background-color: #3b3b3b;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+        }
+
+        .tool-icon:hover {
+            background-color: #2a2a2a;
+        }
+
+        .content-box {
+            background-color: white;
+            flex: 1;
+            padding: 30px 40px;
+            min-height: 400px;
+            overflow-x: auto;
+        }
+
+        .question-text {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .options-list {
+            list-style: none;
+            margin-bottom: 30px;
+            margin-left: 5px;
+        }
+
+        .options-list li {
+            font-size: 15px;
+            color: #333;
+            margin-bottom: 10px;
+            font-family: 'Courier New', monospace;
+            line-height: 1.6;
+        }
+
+        .options-list .option-label {
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bold;
+            margin-right: 8px;
+            color: #555;
+        }
+
+        .instruction-text {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .radio-selections {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-left: 5px;
+        }
+
+        .radio-label {
+            font-size: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+        }
+
+        .radio-label .radio-letter {
+            font-family: Arial, Helvetica, sans-serif;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .quiz-footer {
+            background-color: white;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #e0e0e0;
+            margin-left: 60px;
+            margin-right: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .mark-return {
+            color: #5bc0de;
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .mark-return:hover {
+            text-decoration: underline;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 30px;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .btn-next {
+            background: linear-gradient(to bottom, #73c8f0, #40a0db);
+            border: 1px solid #3598d4;
+        }
+
+        .btn-next:hover {
+            background: linear-gradient(to bottom, #5cbbe6, #2d8dca);
+        }
+
+        .btn-submit {
+            background: linear-gradient(to bottom, #73c8f0, #40a0db);
+            border: 1px solid #3598d4;
+        }
+
+        .btn-submit:hover {
+            background: linear-gradient(to bottom, #5cbbe6, #2d8dca);
+        }
+
+        .upload-status {
+            font-size: 13px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .upload-status.success {
+            color: #27ae60;
+        }
+
+        .file-input-hidden {
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            .quiz-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .header-right {
+                text-align: left;
+                width: 100%;
+            }
+            .content-box {
+                padding: 20px;
+            }
+            .quiz-footer {
+                margin-left: 0;
+                margin-right: 0;
+                padding: 15px 20px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .action-buttons {
+                justify-content: stretch;
+            }
+            .action-buttons .btn {
+                flex: 1;
+                text-align: center;
+            }
+            .sidebar {
+                width: 45px;
+            }
+            .main-layout {
+                padding: 10px 10px 0 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="quiz-header">
+            <div class="header-left">
+                <h1>Introduction to Algebra</h1>
+                <div class="subtitle">
+                    <span class="quiz-label">Quiz</span>
+                    <span class="active-label">Active</span>
+                </div>
+                <div class="question-nav">
+                    <div class="nav-box active">1</div>
+                    <div class="nav-box">2</div>
+                    <div class="nav-box">3</div>
+                    <div class="nav-box">4</div>
+                    <div class="nav-box">5</div>
+                    <div class="nav-box">6</div>
+                    <div class="nav-box">7</div>
+                    <div class="nav-box">8</div>
+                    <div class="nav-box">9</div>
+                    <div class="nav-box">10</div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="timer-label">TIME REMAINING</div>
+                <div class="timer-display" id="timer">56:42</div>
+            </div>
+        </header>
+
+        <main class="main-layout">
+            <aside class="sidebar">
+                <div class="tool-icon"><i class="fa-solid fa-pen"></i></div>
+                <div class="tool-icon"><i class="fa-solid fa-headphones"></i></div>
+            </aside>
+
+            <section class="content-box">
+                <div class="question-text">
+                    Which equation is an example of the commutative property of multiplication?
+                </div>
+
+                <ul class="options-list">
+                    <li><span class="option-label">A.</span> (4 + 2)(-3 + 5) = (-3 + 5)(4 + 2)</li>
+                    <li><span class="option-label">B.</span> (4 + 2)i = 4i + 2i</li>
+                    <li><span class="option-label">C.</span> (4 + 2) + (-3 + 5) = (4 + 2 + (-3)) + 5</li>
+                    <li><span class="option-label">D.</span> (4 + 2) + 0 = (4 + 2)</li>
+                </ul>
+
+                <div class="instruction-text">
+                    Please select the best answer from the choices provided
+                </div>
+
+                <form class="radio-selections">
+                    <label class="radio-label">
+                        <input type="radio" name="answer" value="A">
+                        <span class="radio-letter">A</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="answer" value="B">
+                        <span class="radio-letter">B</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="answer" value="C" checked>
+                        <span class="radio-letter">C</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="answer" value="D">
+                        <span class="radio-letter">D</span>
+                    </label>
+                </form>
+
+                <div id="uploadStatus" class="upload-status"></div>
+            </section>
+        </main>
+
+        <footer class="quiz-footer">
+            <button class="mark-return" id="markReturnBtn">
+                <i class="fa-solid fa-camera"></i> Mark this and return
+            </button>
+            <div class="action-buttons">
+                <button class="btn btn-next" id="nextBtn">Next</button>
+                <button class="btn btn-submit">Submit</button>
+            </div>
+        </footer>
+    </div>
+
+    <input type="file" id="fileInput" class="file-input-hidden" multiple accept="image/*">
+
+    <script>
+        const timerDisplay = document.getElementById('timer');
+        let totalSeconds = (56 * 60) + 42;
+
+        function updateTimer() {
+            if (totalSeconds <= 0) return;
+            totalSeconds--;
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            timerDisplay.textContent =
+                (minutes < 10 ? '0' + minutes : minutes) + ':' +
+                (seconds < 10 ? '0' + seconds : seconds);
+        }
+        setInterval(updateTimer, 1000);
+
+        const fileInput = document.getElementById('fileInput');
+        const markReturnBtn = document.getElementById('markReturnBtn');
+        const uploadStatus = document.getElementById('uploadStatus');
+
+        markReturnBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', async () => {
+            const files = fileInput.files;
+            if (!files.length) return;
+
+            uploadStatus.textContent = 'Uploading ' + files.length + ' file(s)...';
+            uploadStatus.className = 'upload-status';
+
+            const formData = new FormData();
+            for (const file of files) {
+                formData.append('files', file);
+            }
+
+            try {
+                const res = await fetch('/upload', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.success) {
+                    uploadStatus.textContent = 'Uploaded ' + data.count + ' photo(s) successfully';
+                    uploadStatus.className = 'upload-status success';
+                } else {
+                    uploadStatus.textContent = 'Upload failed: ' + (data.error || 'Unknown error');
+                    uploadStatus.className = 'upload-status';
+                }
+            } catch (err) {
+                uploadStatus.textContent = 'Upload error: ' + err.message;
+                uploadStatus.className = 'upload-status';
+            }
+
+            fileInput.value = '';
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            window.location.href = '/download.html';
+        });
+    </script>
+</body>
+</html>

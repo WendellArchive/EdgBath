@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Photo Download</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #1a1a2e;
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #16213e, #0f3460);
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .header .count {
+            background: #e94560;
+            color: white;
+            border-radius: 20px;
+            padding: 2px 12px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .upload-bar {
+            background: #16213e;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid #0f3460;
+        }
+
+        .upload-bar button {
+            background: #5bc0de;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .upload-bar button:active {
+            transform: scale(0.97);
+        }
+
+        .upload-bar .upload-msg {
+            font-size: 13px;
+            color: #aaa;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .upload-bar .upload-msg.success {
+            color: #2ecc71;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 16px;
+        }
+
+        .photo-item {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #0f3460;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .photo-item .delete-btn {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(233, 69, 96, 0.9);
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .photo-item .file-name {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 4px 6px;
+            background: rgba(0,0,0,0.7);
+            font-size: 10px;
+            color: #ccc;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 60px;
+            margin-bottom: 16px;
+            color: #333;
+        }
+
+        .download-section {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #16213e, #0f3460);
+            padding: 16px 20px;
+            box-shadow: 0 -2px 12px rgba(0,0,0,0.3);
+            z-index: 100;
+        }
+
+        .download-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #e94560, #c23152);
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .download-btn:active {
+            transform: scale(0.98);
+        }
+
+        .download-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .progress-container {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .progress-container.visible {
+            display: block;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #2ecc71, #27ae60);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 12px;
+            color: #aaa;
+            margin-top: 4px;
+            text-align: center;
+        }
+
+        .file-input-hidden {
+            display: none;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #5bc0de;
+            text-decoration: none;
+            font-size: 14px;
+            margin-top: 12px;
+        }
+
+        @media (max-width: 480px) {
+            .photo-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 6px;
+            }
+            .header h1 {
+                font-size: 16px;
+            }
+            .upload-bar {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1><i class="fa-solid fa-images"></i> Photo Gallery</h1>
+        <span class="count" id="fileCount">0</span>
+    </div>
+
+    <div class="upload-bar">
+        <button id="uploadBtn"><i class="fa-solid fa-camera"></i> Mark this and return</button>
+        <span id="uploadMsg" class="upload-msg">Upload photos to get started</span>
+    </div>
+
+    <div class="container">
+        <div id="emptyState" class="empty-state">
+            <i class="fa-regular fa-image"></i>
+            <p>No photos uploaded yet</p>
+            <p style="font-size:13px;margin-top:8px;color:#555;">Tap "Mark this and return" to add photos</p>
+        </div>
+        <div id="photoGrid" class="photo-grid"></div>
+        <a href="/" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Quiz</a>
+    </div>
+
+    <div class="download-section">
+        <button class="download-btn" id="downloadBtn" disabled>
+            <i class="fa-solid fa-download"></i> Download All Photos
+        </button>
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">Generating zip...</div>
+        </div>
+    </div>
+
+    <input type="file" id="fileInput" class="file-input-hidden" multiple accept="image/*">
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const uploadMsg = document.getElementById('uploadMsg');
+        const photoGrid = document.getElementById('photoGrid');
+        const emptyState = document.getElementById('emptyState');
+        const fileCount = document.getElementById('fileCount');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+
+        async function loadFiles() {
+            try {
+                const res = await fetch('/api/files');
+                const files = await res.json();
+                renderFiles(files);
+            } catch (err) {
+                console.error('Failed to load files', err);
+            }
+        }
+
+        function renderFiles(files) {
+            photoGrid.innerHTML = '';
+            if (files.length === 0) {
+                emptyState.style.display = 'block';
+                fileCount.textContent = '0';
+                downloadBtn.disabled = true;
+                return;
+            }
+            emptyState.style.display = 'none';
+            fileCount.textContent = files.length;
+            downloadBtn.disabled = false;
+
+            for (const f of files) {
+                const div = document.createElement('div');
+                div.className = 'photo-item';
+                div.innerHTML = `
+                    <img src="/uploads/${f.name}" alt="${f.name}" loading="lazy">
+                    <button class="delete-btn" data-file="${f.name}"><i class="fa-solid fa-xmark"></i></button>
+                    <div class="file-name">${f.name}</div>
+                `;
+                div.querySelector('.delete-btn').addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    await deleteFile(f.name);
+                });
+                photoGrid.appendChild(div);
+            }
+        }
+
+        async function deleteFile(name) {
+            try {
+                await fetch('/api/files', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ files: [name] })
+                });
+                loadFiles();
+            } catch (err) {
+                console.error('Delete failed', err);
+            }
+        }
+
+        uploadBtn.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', async () => {
+            const files = fileInput.files;
+            if (!files.length) return;
+
+            uploadMsg.textContent = 'Uploading ' + files.length + ' file(s)...';
+            uploadMsg.className = 'upload-msg';
+
+            const formData = new FormData();
+            for (const file of files) {
+                formData.append('files', file);
+            }
+
+            try {
+                const res = await fetch('/upload', { method: 'POST', body: formData });
+                const data = await res.json();
+                if (data.success) {
+                    uploadMsg.textContent = 'Uploaded ' + data.count + ' photo(s) successfully';
+                    uploadMsg.className = 'upload-msg success';
+                    loadFiles();
+                } else {
+                    uploadMsg.textContent = 'Upload failed: ' + (data.error || 'Unknown error');
+                    uploadMsg.className = 'upload-msg';
+                }
+            } catch (err) {
+                uploadMsg.textContent = 'Upload error: ' + err.message;
+                uploadMsg.className = 'upload-msg';
+            }
+
+            fileInput.value = '';
+            setTimeout(() => {
+                uploadMsg.textContent = '';
+                uploadMsg.className = 'upload-msg';
+            }, 3000);
+        });
+
+        downloadBtn.addEventListener('click', async () => {
+            progressContainer.classList.add('visible');
+            progressFill.style.width = '0%';
+            progressText.textContent = 'Starting zip generation...';
+            downloadBtn.disabled = true;
+
+            try {
+                const res = await fetch('/api/generate-zips', { method: 'POST' });
+                const data = await res.json();
+
+                if (!data.jobId) {
+                    if (data.zips && data.zips.length === 0) {
+                        progressText.textContent = 'No photos to download';
+                        downloadBtn.disabled = false;
+                        setTimeout(() => progressContainer.classList.remove('visible'), 2000);
+                        return;
+                    }
+                    progressText.textContent = 'Error: ' + (data.error || 'Unknown error');
+                    downloadBtn.disabled = false;
+                    return;
+                }
+
+                const { jobId, totalChunks, totalFiles } = data;
+
+                const eventSource = new EventSource('/api/zip-progress/' + jobId);
+
+                eventSource.onmessage = (event) => {
+                    const prog = JSON.parse(event.data);
+                    const pct = Math.round((prog.completed / prog.total) * 100);
+                    progressFill.style.width = pct + '%';
+                    progressText.textContent = 'Creating zip ' + prog.completed + ' of ' + prog.total;
+                };
+
+                eventSource.addEventListener('done', (event) => {
+                    eventSource.close();
+                    const zips = JSON.parse(event.data);
+                    progressText.textContent = 'Downloading ' + zips.length + ' zip file(s)...';
+
+                    for (const zip of zips) {
+                        const a = document.createElement('a');
+                        a.href = '/api/download-zip?name=' + encodeURIComponent(zip.name);
+                        a.download = zip.name;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                    }
+
+                    setTimeout(() => {
+                        progressFill.style.width = '100%';
+                        progressText.textContent = 'Download complete!';
+                        downloadBtn.disabled = false;
+                        setTimeout(() => {
+                            progressContainer.classList.remove('visible');
+                        }, 2000);
+                    }, 500);
+                });
+
+                eventSource.addEventListener('error', (event) => {
+                    eventSource.close();
+                    let errMsg = 'An error occurred';
+                    try {
+                        const d = JSON.parse(event.data);
+                        errMsg = d.error || errMsg;
+                    } catch (e) {}
+                    progressText.textContent = errMsg;
+                    downloadBtn.disabled = false;
+                });
+
+            } catch (err) {
+                progressText.textContent = 'Error: ' + err.message;
+                downloadBtn.disabled = false;
+            }
+        });
+
+        loadFiles();
+    </script>
+</body>
+</html>
